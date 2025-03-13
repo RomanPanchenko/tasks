@@ -1,0 +1,10 @@
+.idea
+infra/mysql-data/
+/coverage/
+/dist/
+/tmp/
+/logs/
+/config/local-production.js
+/config/local-development.js
+/config/local-test.js
+/node_modules/
