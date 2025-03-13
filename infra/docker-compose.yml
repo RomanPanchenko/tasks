@@ -1,0 +1,45 @@
+services:
+  mysqldb:
+    image: mysql:8.1
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "tasks"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./initdb.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - tasks_net
+
+  server:
+    platform: linux/amd64
+    depends_on:
+      - mysqldb
+    build:
+      context: ./../server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./../server:/app
+    environment:
+      NODE_ENV: development
+    container_name: tasks-server
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    networks:
+      - tasks_net
+
+#  nginx:
+#    image: nginx:alpine
+#    volumes:
+#      - ./../client:/usr/share/nginx/html:ro
+#      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+#    ports:
+#      - "443:443"
+#    networks:
+#      - tasks_net
+
+networks:
+  tasks_net:
+    external: true
